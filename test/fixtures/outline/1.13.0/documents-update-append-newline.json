@@ -1,0 +1,109 @@
+{
+  "method": "documents.update",
+  "request": {
+    "id": "f7258c5c-bdc7-49b0-bd03-61d65bbf1407",
+    "text": "\n\n2026-11-22 12:05 — Deuxième ligne.",
+    "append": true
+  },
+  "status": 200,
+  "headers": {
+    "content-type": "application/json; charset=utf-8",
+    "x-content-type-options": "nosniff"
+  },
+  "body": {
+    "data": {
+      "id": "f7258c5c-bdc7-49b0-bd03-61d65bbf1407",
+      "url": "/doc/journal-chaudiere-wWtvmGFB7F",
+      "path": "/doc/journal-chaudiere-wWtvmGFB7F",
+      "urlId": "wWtvmGFB7F",
+      "title": "Journal chaudière",
+      "text": "Premier jour.2026-11-22 12:00 — Révision faite.\n\n2026-11-22 12:05 — Deuxième ligne.",
+      "icon": null,
+      "color": null,
+      "tasks": {
+        "completed": 0,
+        "total": 0
+      },
+      "language": null,
+      "createdAt": "2026-11-22T11:28:22.745Z",
+      "createdBy": {
+        "id": "95db2ae7-cf8c-4a42-8a8e-8b7e006a9cd6",
+        "name": "Alice Martin",
+        "avatarUrl": null,
+        "color": "#2930FF",
+        "role": "admin",
+        "isSuspended": false,
+        "createdAt": "2026-11-22T11:27:37.512Z",
+        "updatedAt": "2026-11-22T11:27:37.526Z",
+        "deletedAt": null,
+        "lastActiveAt": "2026-11-22T11:27:37.525Z",
+        "timezone": null
+      },
+      "updatedAt": "2026-11-22T11:28:55.484Z",
+      "updatedBy": {
+        "id": "95db2ae7-cf8c-4a42-8a8e-8b7e006a9cd6",
+        "name": "Alice Martin",
+        "avatarUrl": null,
+        "color": "#2930FF",
+        "role": "admin",
+        "isSuspended": false,
+        "createdAt": "2026-11-22T11:27:37.512Z",
+        "updatedAt": "2026-11-22T11:27:37.526Z",
+        "deletedAt": null,
+        "lastActiveAt": "2026-11-22T11:27:37.525Z",
+        "timezone": null
+      },
+      "publishedAt": "2026-11-22T11:28:22.757Z",
+      "archivedAt": null,
+      "deprecatedReason": null,
+      "deletedAt": null,
+      "collaboratorIds": ["95db2ae7-cf8c-4a42-8a8e-8b7e006a9cd6"],
+      "revision": 4,
+      "fullWidth": false,
+      "preferences": null,
+      "collectionId": "04ec56b8-04ee-4e7c-97ce-8d7434dd9023",
+      "parentDocumentId": null,
+      "isCollectionDeleted": false,
+      "ownerId": null,
+      "templateId": null,
+      "insightsEnabled": true,
+      "popularityScore": 0
+    },
+    "policies": [
+      {
+        "id": "f7258c5c-bdc7-49b0-bd03-61d65bbf1407",
+        "abilities": {
+          "read": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "update": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "delete": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "move": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "duplicate": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "download": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "star": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "unstar": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "subscribe": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "unsubscribe": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "share": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "archive": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "pin": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "manageUsers": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "restore": false,
+          "updateDeprecatedReason": false,
+          "listRevisions": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "listViews": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "comment": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "publish": false,
+          "createChildDocument": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "updateInsights": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "unpin": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "pinToHome": true,
+          "permanentDelete": false,
+          "unarchive": false,
+          "unpublish": true
+        }
+      }
+    ],
+    "status": 200,
+    "ok": true
+  }
+}

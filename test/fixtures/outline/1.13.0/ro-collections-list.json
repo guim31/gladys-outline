@@ -1,0 +1,78 @@
+{
+  "method": "collections.list",
+  "request": {
+    "limit": 1
+  },
+  "status": 200,
+  "headers": {
+    "content-type": "application/json; charset=utf-8",
+    "x-content-type-options": "nosniff"
+  },
+  "body": {
+    "pagination": {
+      "limit": 1,
+      "offset": 0,
+      "nextPath": "/api/collections.list?limit=1&offset=1",
+      "total": 2
+    },
+    "data": [
+      {
+        "id": "04ec56b8-04ee-4e7c-97ce-8d7434dd9023",
+        "url": "/collection/jardin-jBq1bhQFYc",
+        "urlId": "jBq1bhQFYc",
+        "name": "Jardin",
+        "description": null,
+        "sort": {
+          "field": "index",
+          "direction": "asc"
+        },
+        "icon": null,
+        "color": null,
+        "createdAt": "2026-11-22T11:28:13.651Z",
+        "updatedAt": "2026-11-22T11:28:22.755Z",
+        "index": "8",
+        "sharing": true,
+        "commenting": null,
+        "templateManagement": "admin",
+        "permission": null,
+        "ownerId": null,
+        "deletedAt": null,
+        "archivedAt": null,
+        "deprecatedReason": null
+      }
+    ],
+    "policies": [
+      {
+        "id": "04ec56b8-04ee-4e7c-97ce-8d7434dd9023",
+        "abilities": {
+          "read": true,
+          "update": true,
+          "delete": true,
+          "move": true,
+          "duplicate": true,
+          "download": true,
+          "star": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "unstar": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "readDocument": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "subscribe": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "unsubscribe": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "share": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "shareDocument": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "updateDocument": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "createDocument": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "deleteDocument": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "createTemplate": true,
+          "manageTemplate": true,
+          "archive": true,
+          "pin": true,
+          "manageUsers": true,
+          "export": true,
+          "restore": false,
+          "updateDeprecatedReason": false
+        }
+      }
+    ],
+    "status": 200,
+    "ok": true
+  }
+}

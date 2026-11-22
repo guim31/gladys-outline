@@ -1,67 +1,162 @@
-# Template de démonstration
+# Outline
 
-Ceci est la documentation utilisateur de l'intégration. Gladys ré-héberge ce
-fichier et affiche un lien **Documentation** permanent vers lui dans l'écran
-de configuration (dans la langue de l'utilisateur, avec l'anglais en repli) —
-c'est au moment de configurer que l'utilisateur en a le plus besoin. Gardez
-les courtes indications d'accueil dans les blocs `section` du `config_schema`
-du manifest ; mettez ici le pas-à-pas détaillé (captures d'écran, dépannage…).
+Connectez Gladys à [Outline](https://www.getoutline.com), le wiki d'équipe :
+suivez ses compteurs et le dernier document modifié, réagissez quand un
+document est créé ou modifié, cherchez-y depuis vos scènes, écrivez des
+documents et tenez un journal (la chaudière, l'alarme, le jardin…) que Gladys
+remplit ligne par ligne. Un Outline auto-hébergé reste sur votre réseau local :
+Gladys lui parle directement. Outline Cloud fonctionne de la même façon, avec
+son adresse.
 
-## Ce que vous obtenez
+Testé sur un vrai Outline 1.13.0 (l'image Docker officielle). Vos retours sont
+les bienvenus sur le forum de Gladys.
 
-Six appareils de démonstration apparaissent après l'installation : une
-station météo (vraies données Open-Meteo), un interrupteur, une lampe
-variable, une prise connectée avec mesure de puissance, un détecteur de
-mouvement et une caméra.
+## Prérequis
+
+- Gladys Assistant 5.1 ou plus récent.
+- Outline joignable depuis la machine de Gladys (auto-hébergé), ou un espace
+  Outline Cloud.
+- Une clé d'API : dans Outline, ouvrez **Settings → API & Apps** (ou
+  **Preferences → API keys**), puis créez une clé. Laissez ses droits (scopes)
+  vides pour un accès complet. Une clé limitée à la lecture suffit pour
+  l'appareil, le widget, le déclencheur et la recherche, pas pour les actions
+  qui écrivent. Copiez la clé (elle commence par `ol_api_`) : elle n'est
+  affichée qu'une fois. L'intégration voit ce que voit le propriétaire de la
+  clé.
 
 ## Configuration
 
 1. Ouvrez l'onglet **Configuration** de l'intégration.
-2. Renseignez la **latitude** et la **longitude** que la station météo de
-   démonstration doit observer (Paris par défaut), et choisissez votre unité
-   de température. L'**intervalle de rafraîchissement** règle la fréquence
-   de lecture de la station météo et de la puissance de la prise : toutes
-   les 5 minutes par défaut, toutes les minutes au plus.
-3. Enregistrez : les appareils apparaissent dans l'onglet **Découverte**,
-   prêts à être ajoutés.
+2. Dans **Adresse d'Outline**, saisissez l'adresse à laquelle vous ouvrez
+   Outline, par exemple `192.168.1.50:3000`, `https://wiki.example.org` ou
+   `https://<équipe>.getoutline.com`.
+3. Collez la **Clé d'API**.
+4. **Lire Outline toutes les** : 5, 15 (par défaut), 30 ou 60 minutes. Les
+   documents modifiés sont annoncés à la lecture suivante.
+5. **Langue des noms et messages** fixe le nom des fonctionnalités (figé à
+   l'ajout d'un appareil) et les textes de l'intégration. Français par défaut.
+6. Enregistrez, puis utilisez **Tester la connexion** : elle affiche le nombre
+   de documents et de collections.
+7. Dans l'onglet **Découverte**, ajoutez l'appareil **Outline**.
 
-Le réglage **Préférer la connexion locale** pilote la prise de
-démonstration : elle affiche en badge le canal réellement utilisé (local ou
-cloud), avec un point orange quand elle fonctionne en mode dégradé (local
-refusé, bascule cloud).
+## Appareils
 
-## Actions
+**Outline** (un appareil) :
 
-- **Tester le fournisseur météo** — effectue une requête en direct vers
-  Open-Meteo et affiche la température et l'humidité actuelles sous le
-  bouton.
-- **Identifier un appareil** — choisissez un de vos appareils dans la liste
-  et il se signale (la lampe de démonstration « clignote » dans les logs).
+| Fonctionnalité            | Valeur                                         |
+| ------------------------- | ---------------------------------------------- |
+| Joignable                 | 1 quand Outline répond, 0 sinon                |
+| Documents                 | documents publiés que la clé peut lire         |
+| Collections               | collections que la clé peut lire               |
+| Dernier document modifié  | titre du document enregistré le plus récemment |
+| Dernière modification par | qui l'a enregistré                             |
+| Dernière modification le  | quand (date et heure, fuseau de Gladys)        |
 
-## Scènes
+Les compteurs gardent leur historique. L'appareil garde son identité quand
+l'adresse d'Outline change.
 
-L'intégration ajoute ses propres cartes à l'éditeur de scènes (Gladys 5.1
-ou plus récent), dans la catégorie **Intégrations** :
+## Widget du tableau de bord
 
-- **Mouvement détecté** (déclencheur) — lance la scène quand un détecteur
-  de démonstration voit bouger quelque chose. Choisissez éventuellement le
-  détecteur et ce qui a bougé (personne, animal) ; laissés vides, toute
-  détection correspond. Les actions suivantes peuvent lire ce qui a bougé
-  avec `{{triggerEvent.data.target}}`.
-- **Identifier un appareil** (action) — fait se signaler l'appareil choisi.
-  Elle indique si l'appareil a pu se signaler, pour que les actions
-  suivantes puissent en dépendre.
+**Outline** : deux tuiles (documents, collections) et les huit derniers
+documents modifiés, avec leur collection, leur auteur et l'heure de la
+modification. Dans les réglages du widget, **Collection** ne garde que les
+documents d'une collection (son nom, majuscules indifférentes) ; la tuile les
+compte alors. **Masquer les compteurs** ne garde que la liste. Quand Outline
+est joint en https, chaque document s'ouvre dans Outline.
 
-## Tableau de bord
+## Déclencheurs de scène
 
-Ajoutez le widget **État de la démo** à un tableau de bord : il affiche en
-direct la température de la station météo et la puissance de la prise du
-bureau, la connexion utilisée par la prise (en orange si dégradée) et la
-position observée. Son bouton **Identifier la lampe** fait se signaler la
-lampe de démonstration.
+- **Document Outline créé ou modifié** : un document est publié ou enregistré
+  dans Outline. Filtres : **Collection** (son nom exactement comme dans
+  Outline, ex. `Maison`) et **Changement** (créé, modifié, ou vide : les deux).
+  Des filtres vides acceptent tous les documents.
+
+Variables : **Titre du document**, **Collection**, **Changement** (`created`
+ou `updated`), **Adresse du document**, **Modifié par** et **Identifiant du
+document**.
+
+La première lecture après l'installation est silencieuse : les documents déjà
+présents ne sont pas annoncés. Les documents écrits par cette intégration ne
+sont jamais annoncés. Dix documents au plus sont annoncés par lecture, les plus
+anciens d'abord ; les suivants attendent la lecture suivante. Quand les 25
+documents lus ont tous changé depuis la dernière lecture (un import), dix sont
+annoncés et le reste est compté comme vu.
+
+## Actions de scène
+
+- **Créer un document Outline** : **Collection** (son nom), **Titre** et, si
+  vous le souhaitez, **Texte** (Markdown). Le document est publié aussitôt.
+- **Ajouter une ligne à un document Outline** : **Document** (son titre exact,
+  majuscules indifférentes, ou son adresse dans Outline) et **Ligne**. La ligne
+  est ajoutée à la fin du document, en nouveau paragraphe, précédée de la date
+  et de l'heure sauf si **Commencer par la date et l'heure** est désactivé.
+  Quand aucun document ne porte ce titre et qu'une **Collection** est indiquée,
+  le document y est créé à sa première ligne ; sans collection, c'est une
+  erreur.
+- **Rechercher dans Outline** : **Mots à rechercher** et, si vous le souhaitez,
+  une **Collection**. Elle rend le meilleur résultat — **Titre du document**,
+  **Adresse du document**, **Extrait**, **Collection**, **Identifiant du
+  document** — et **Documents trouvés**, pour les actions suivantes de la scène
+  (un message, une réponse vocale). Aucun résultat est une erreur, affichée en
+  rouge.
+
+Les deux premières rendent **Identifiant du document**, **Titre du document**
+et **Adresse du document** ; la deuxième aussi **Document créé**.
+
+## Exemples de scènes
+
+- **Journal de la chaudière** : quand la pression de la chaudière passe sous
+  1 bar → **Ajouter une ligne à un document Outline**, document « Journal
+  chaudière », collection `Maison`, ligne « Pression sous 1 bar ».
+- **Savoir ce qui a changé** : déclencheur **Document Outline créé ou
+  modifié**, collection `Procédures` → envoyer un message
+  « {{triggerEvent.data.updated_by}} a modifié {{triggerEvent.data.title}} ».
+- **Interroger le wiki** : quand vous envoyez « wifi » à Gladys → **Rechercher
+  dans Outline** « wifi » → envoyer l'extrait et l'adresse du document trouvé.
+- **Rapport de vacances** : quand l'alarme est désactivée au retour de vacances
+  → **Créer un document Outline** dans `Rapports`, titré « Vacances 2026 ».
 
 ## Dépannage
 
-L'intégration journalise tout ce qu'elle fait : consultez les logs de
-l'intégration depuis l'interface Gladys (ou `docker logs` sur l'hôte) avec
-`LOG_LEVEL=debug` pour le détail complet.
+- **« Outline n'a pas accepté la clé d'API »** : la clé a été révoquée, a
+  expiré ou a été mal saisie. Créez-en une nouvelle dans **Settings → API &
+  Apps**.
+- **« La clé d'API ne permet pas de le faire »** : les droits de la clé ne
+  permettent pas d'écrire, ou son propriétaire ne peut pas modifier cette
+  collection. Utilisez une clé sans restriction, ou donnez les droits à son
+  propriétaire.
+- **« Outline limite les requêtes de cette clé »** : Outline a répondu 429.
+  L'intégration réessaie à la lecture suivante ; espacez les scènes qui
+  écrivent.
+- **« Outline répond à une autre adresse »** : Outline redirige vers une
+  autre adresse (une page de connexion, un autre domaine). Saisissez celle
+  affichée par votre navigateur. Un simple passage de http à https est suivi
+  tout seul.
+- **« Outline ne répond pas »** : vérifiez l'adresse et le port depuis la
+  machine de Gladys. Le conteneur est sur un réseau en pont : `localhost` est
+  le conteneur lui-même, saisissez plutôt l'adresse IP du serveur.
+- **« Cette adresse ne répond pas comme Outline »** : une page de connexion
+  d'un proxy répond à la place d'Outline. Saisissez l'adresse de l'accueil
+  d'Outline.
+- La version affiche `?` sur l'appareil : Outline Cloud ne la donne pas. Rien
+  d'autre n'est touché.
+- Pour plus de détails dans les journaux de l'intégration, réglez
+  `LOG_LEVEL=debug`.
+
+## Limites
+
+- Un seul espace Outline, vu avec les droits de sa clé d'API. Les brouillons ne
+  sont ni comptés ni annoncés.
+- Le déclencheur se déclenche à la lecture suivante (15 minutes par défaut),
+  pas instantanément : l'intégration ne reçoit pas les webhooks d'Outline, qui
+  demandent une adresse joignable depuis Outline. Les documents supprimés,
+  archivés ou déplacés ne sont pas annoncés ; un document enregistré plusieurs
+  fois entre deux lectures est annoncé une fois.
+- Une lecture fait deux requêtes (les 25 derniers documents modifiés avec le
+  nombre de documents, et les collections), plus la version une fois. Outline
+  limite chaque adresse à 1000 requêtes par minute, 100 par minute pour lister,
+  chercher et modifier des documents, et 25 par minute pour en créer.
+- Le déclencheur et les actions nomment les collections par leur nom :
+  renommer une collection dans Outline demande de mettre les scènes à jour.
+- L'intégration ne supprime, n'archive ni ne déplace jamais rien dans Outline.
+- Sans lien avec Outline ni General Outline, Inc.

@@ -1,0 +1,17 @@
+{
+  "method": "documents.info",
+  "request": {
+    "id": "zzzzzzzzzz"
+  },
+  "status": 404,
+  "headers": {
+    "content-type": "application/json; charset=utf-8",
+    "x-content-type-options": "nosniff"
+  },
+  "body": {
+    "ok": false,
+    "error": "not_found",
+    "status": 404,
+    "message": "Resource not found"
+  }
+}

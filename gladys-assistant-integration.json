@@ -1,177 +1,717 @@
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Demo Devices Template",
+  "name": "Outline",
   "description": {
-    "en": "Starter template showing sensors, a switch, a dimmable light and a smart plug.",
-    "fr": "Template de démarrage : capteurs, interrupteur, lampe variable et prise connectée."
+    "en": "Your Outline wiki in Gladys: counters, changed documents, search, journal lines from scenes.",
+    "fr": "Votre wiki Outline dans Gladys : compteurs, documents modifiés, recherche, journal écrit par scène.",
+    "de": "Dein Outline-Wiki in Gladys: Zähler, geänderte Dokumente, Suche, Journal aus Szenen.",
+    "es": "Su wiki Outline en Gladys: contadores, documentos modificados, búsqueda, diario desde escenas."
   },
   "version": "1.0.0",
-  "docker_image": "ghcr.io/gladysassistant/integration-template-js:1.0.0",
+  "docker_image": "ghcr.io/guim31/gladys-outline:1.0.0",
   "gladys_version": ">=5.1.0",
-  "cover_image": "https://raw.githubusercontent.com/GladysAssistant/integration-template-js/master/cover.png",
-  "categories": ["lighting", "security", "environment"],
-  "transports": ["local", "cloud"],
+  "cover_image": "https://raw.githubusercontent.com/guim31/gladys-outline/main/cover.png",
+  "categories": ["services"],
+  "transports": ["local"],
   "config_schema": [
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Getting started", "fr": "Pour commencer" },
+      "label": {
+        "en": "Connect Outline",
+        "fr": "Connecter Outline",
+        "de": "Outline verbinden",
+        "es": "Conectar Outline"
+      },
       "description": {
-        "en": "The demo weather station reads real data from the free Open-Meteo API: pick the coordinates to observe. No account, no API key.",
-        "fr": "La station météo de démonstration lit de vraies données via l'API gratuite Open-Meteo : choisissez les coordonnées à observer. Pas de compte, pas de clé d'API."
+        "en": "Enter the address of your Outline and an API key: in Outline, open Settings → API & Apps (or Preferences → API keys), then create a key. Leave its scopes empty for full access; a read-only key works without the scene actions that write. Outline Cloud works too.",
+        "fr": "Saisissez l'adresse de votre Outline et une clé d'API : dans Outline, ouvrez Settings → API & Apps (ou Preferences → API keys), puis créez une clé. Laissez ses droits (scopes) vides pour un accès complet ; une clé en lecture seule convient, sans les actions de scène qui écrivent. Outline Cloud fonctionne aussi.",
+        "de": "Gib die Adresse deines Outline und einen API-Schlüssel ein: Öffne in Outline Settings → API & Apps (oder Preferences → API keys) und erstelle einen Schlüssel. Lass seine Berechtigungen (Scopes) leer für vollen Zugriff; ein Nur-Lese-Schlüssel geht, ohne die schreibenden Szenenaktionen. Outline Cloud funktioniert auch.",
+        "es": "Introduzca la dirección de su Outline y una clave de API: en Outline, abra Settings → API & Apps (o Preferences → API keys) y cree una clave. Deje sus permisos (scopes) vacíos para un acceso completo; una clave de solo lectura sirve, sin las acciones de escena que escriben. Outline Cloud también funciona."
       },
       "links": [
         {
-          "url": "https://open-meteo.com/en/docs",
-          "label": { "en": "Open-Meteo documentation", "fr": "Documentation Open-Meteo" }
+          "url": "https://www.getoutline.com/developers",
+          "label": {
+            "en": "Outline API documentation",
+            "fr": "Documentation de l'API d'Outline",
+            "de": "Outline-API-Dokumentation",
+            "es": "Documentación de la API de Outline"
+          }
         }
       ]
     },
     {
-      "key": "latitude",
-      "type": "number",
-      "label": { "en": "Latitude", "fr": "Latitude" },
-      "description": {
-        "en": "Latitude used for the demo weather sensor.",
-        "fr": "Latitude utilisée par le capteur météo de démonstration."
+      "key": "url",
+      "type": "string",
+      "label": {
+        "en": "Outline address",
+        "fr": "Adresse d'Outline",
+        "de": "Outline-Adresse",
+        "es": "Dirección de Outline"
       },
-      "placeholder": { "en": "e.g. 48.8566", "fr": "ex. 48.8566" },
+      "placeholder": {
+        "en": "e.g. 192.168.1.50:3000",
+        "fr": "ex. 192.168.1.50:3000",
+        "de": "z. B. 192.168.1.50:3000",
+        "es": "p. ej. 192.168.1.50:3000"
+      },
+      "description": {
+        "en": "The address you open Outline at (for Outline Cloud: https://<team>.getoutline.com).",
+        "fr": "L'adresse à laquelle vous ouvrez Outline (pour Outline Cloud : https://<équipe>.getoutline.com).",
+        "de": "Die Adresse, unter der du Outline öffnest (für Outline Cloud: https://<team>.getoutline.com).",
+        "es": "La dirección en la que abre Outline (para Outline Cloud: https://<equipo>.getoutline.com)."
+      },
       "required": true,
-      "default": 48.8566,
-      "min": -90,
-      "max": 90
+      "default": ""
     },
     {
-      "key": "longitude",
-      "type": "number",
-      "label": { "en": "Longitude", "fr": "Longitude" },
-      "description": {
-        "en": "Longitude used for the demo weather sensor.",
-        "fr": "Longitude utilisée par le capteur météo de démonstration."
+      "key": "api_key",
+      "type": "secret",
+      "label": {
+        "en": "API key",
+        "fr": "Clé d'API",
+        "de": "API-Schlüssel",
+        "es": "Clave de API"
       },
-      "placeholder": { "en": "e.g. 2.3522", "fr": "ex. 2.3522" },
-      "required": true,
-      "default": 2.3522,
-      "min": -180,
-      "max": 180
+      "description": {
+        "en": "Starts with ol_api_. Shown once, when the key is created.",
+        "fr": "Commence par ol_api_. Affichée une seule fois, à la création de la clé.",
+        "de": "Beginnt mit ol_api_. Wird nur einmal angezeigt, beim Erstellen des Schlüssels.",
+        "es": "Empieza por ol_api_. Se muestra una sola vez, al crear la clave."
+      },
+      "required": true
     },
     {
-      "key": "unit",
+      "key": "refresh_minutes",
       "type": "select",
-      "label": { "en": "Temperature unit", "fr": "Unité de température" },
+      "label": {
+        "en": "Read Outline every",
+        "fr": "Lire Outline toutes les",
+        "de": "Outline lesen alle",
+        "es": "Leer Outline cada"
+      },
+      "description": {
+        "en": "Changed documents are announced at the next read.",
+        "fr": "Les documents modifiés sont annoncés à la lecture suivante.",
+        "de": "Geänderte Dokumente werden beim nächsten Lesen gemeldet.",
+        "es": "Los documentos modificados se anuncian en la siguiente lectura."
+      },
       "required": false,
-      "default": "celsius",
+      "default": "15",
       "options": [
-        { "value": "celsius", "label": { "en": "Celsius", "fr": "Celsius" } },
-        { "value": "fahrenheit", "label": { "en": "Fahrenheit", "fr": "Fahrenheit" } }
+        {
+          "value": "5",
+          "label": {
+            "en": "5 minutes",
+            "fr": "5 minutes",
+            "de": "5 Minuten",
+            "es": "5 minutos"
+          }
+        },
+        {
+          "value": "15",
+          "label": {
+            "en": "15 minutes",
+            "fr": "15 minutes",
+            "de": "15 Minuten",
+            "es": "15 minutos"
+          }
+        },
+        {
+          "value": "30",
+          "label": {
+            "en": "30 minutes",
+            "fr": "30 minutes",
+            "de": "30 Minuten",
+            "es": "30 minutos"
+          }
+        },
+        {
+          "value": "60",
+          "label": {
+            "en": "60 minutes",
+            "fr": "60 minutes",
+            "de": "60 Minuten",
+            "es": "60 minutos"
+          }
+        }
       ]
     },
     {
-      "key": "poll_frequency",
-      "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Intervalle de rafraîchissement (s)" },
+      "key": "language",
+      "type": "select",
+      "label": {
+        "en": "Language of names and messages",
+        "fr": "Langue des noms et messages",
+        "de": "Sprache der Namen und Meldungen",
+        "es": "Idioma de nombres y mensajes"
+      },
       "description": {
-        "en": "How often sensors are polled, in seconds (one minute minimum).",
-        "fr": "Fréquence d'interrogation des capteurs, en secondes (une minute minimum)."
+        "en": "Feature names are set when a device is added to Gladys.",
+        "fr": "Les noms des fonctionnalités sont fixés à l'ajout d'un appareil dans Gladys.",
+        "de": "Die Namen der Funktionen werden beim Hinzufügen eines Geräts zu Gladys festgelegt.",
+        "es": "Los nombres de las funciones se fijan al añadir un dispositivo a Gladys."
       },
       "required": false,
-      "default": 300,
-      "min": 60,
-      "max": 3600
+      "default": "fr",
+      "options": [
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "Anglais",
+            "de": "Englisch",
+            "es": "Inglés"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "French",
+            "fr": "Français",
+            "de": "Französisch",
+            "es": "Francés"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "German",
+            "fr": "Allemand",
+            "de": "Deutsch",
+            "es": "Alemán"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Spanish",
+            "fr": "Espagnol",
+            "de": "Spanisch",
+            "es": "Español"
+          }
+        }
+      ]
     }
   ],
   "actions": [
     {
-      "key": "test_weather",
-      "label": { "en": "Test the weather provider", "fr": "Tester le fournisseur météo" },
-      "timeout_seconds": 30
-    },
-    {
-      "key": "identify",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
-        }
-      ]
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
+      },
+      "timeout_seconds": 60
     }
   ],
   "scene_triggers": [
     {
-      "key": "motion_detected",
-      "label": { "en": "Motion detected", "fr": "Mouvement détecté" },
+      "key": "document_changed",
+      "label": {
+        "en": "Outline document created or updated",
+        "fr": "Document Outline créé ou modifié",
+        "de": "Outline-Dokument erstellt oder geändert",
+        "es": "Documento de Outline creado o modificado"
+      },
       "description": {
-        "en": "A demo motion sensor saw a person or an animal move.",
-        "fr": "Un détecteur de démonstration a vu bouger une personne ou un animal."
+        "en": "A document is published or saved in Outline (the documents written by this integration excepted).",
+        "fr": "Un document est publié ou enregistré dans Outline (hors documents écrits par cette intégration).",
+        "de": "Ein Dokument wird in Outline veröffentlicht oder gespeichert (außer Dokumenten dieser Integration).",
+        "es": "Se publica o guarda un documento en Outline (salvo los documentos escritos por esta integración)."
       },
       "fields": [
         {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Sensor", "fr": "Détecteur" }
+          "key": "collection",
+          "type": "string",
+          "required": false,
+          "label": {
+            "en": "Collection (empty: all)",
+            "fr": "Collection (vide : toutes)",
+            "de": "Sammlung (leer: alle)",
+            "es": "Colección (vacío: todas)"
+          },
+          "description": {
+            "en": "Its name exactly as in Outline (e.g. Home).",
+            "fr": "Son nom exactement comme dans Outline (ex. Maison).",
+            "de": "Der Name genau wie in Outline (z. B. Zuhause).",
+            "es": "Su nombre exactamente como en Outline (p. ej. Casa)."
+          }
         },
         {
-          "key": "target",
-          "type": "multi_select",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" },
+          "key": "change",
+          "type": "select",
+          "required": false,
+          "label": {
+            "en": "Change (empty: both)",
+            "fr": "Changement (vide : les deux)",
+            "de": "Änderung (leer: beide)",
+            "es": "Cambio (vacío: ambos)"
+          },
           "options": [
-            { "value": "person", "label": { "en": "Person", "fr": "Personne" } },
-            { "value": "animal", "label": { "en": "Animal", "fr": "Animal" } }
+            {
+              "value": "created",
+              "label": {
+                "en": "Document created",
+                "fr": "Document créé",
+                "de": "Dokument erstellt",
+                "es": "Documento creado"
+              }
+            },
+            {
+              "value": "updated",
+              "label": {
+                "en": "Document updated",
+                "fr": "Document modifié",
+                "de": "Dokument aktualisiert",
+                "es": "Documento actualizado"
+              }
+            }
           ]
         }
       ],
       "variables": [
         {
-          "key": "target",
+          "key": "title",
           "type": "string",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" }
+          "label": {
+            "en": "Document title",
+            "fr": "Titre du document",
+            "de": "Dokumenttitel",
+            "es": "Título del documento"
+          }
+        },
+        {
+          "key": "collection",
+          "type": "string",
+          "label": {
+            "en": "Collection",
+            "fr": "Collection",
+            "de": "Sammlung",
+            "es": "Colección"
+          }
+        },
+        {
+          "key": "change",
+          "type": "string",
+          "label": {
+            "en": "Change (created or updated)",
+            "fr": "Changement (created ou updated)",
+            "de": "Änderung (created oder updated)",
+            "es": "Cambio (created o updated)"
+          }
+        },
+        {
+          "key": "url",
+          "type": "string",
+          "label": {
+            "en": "Document address",
+            "fr": "Adresse du document",
+            "de": "Adresse des Dokuments",
+            "es": "Dirección del documento"
+          }
+        },
+        {
+          "key": "updated_by",
+          "type": "string",
+          "label": {
+            "en": "Updated by",
+            "fr": "Modifié par",
+            "de": "Geändert von",
+            "es": "Modificado por"
+          }
+        },
+        {
+          "key": "document_id",
+          "type": "string",
+          "label": {
+            "en": "Document id",
+            "fr": "Identifiant du document",
+            "de": "Dokument-ID",
+            "es": "Id. del documento"
+          }
         }
       ]
     }
   ],
   "scene_actions": [
     {
-      "key": "identify_device",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "description": {
-        "en": "Make a device signal itself (the demo light blinks).",
-        "fr": "Fait se signaler un appareil (la lampe de démonstration clignote)."
+      "key": "create_document",
+      "label": {
+        "en": "Create an Outline document",
+        "fr": "Créer un document Outline",
+        "de": "Outline-Dokument erstellen",
+        "es": "Crear un documento de Outline"
       },
-      "timeout_seconds": 15,
+      "description": {
+        "en": "Creates and publishes a Markdown document in a collection.",
+        "fr": "Crée et publie un document Markdown dans une collection.",
+        "de": "Erstellt und veröffentlicht ein Markdown-Dokument in einer Sammlung.",
+        "es": "Crea y publica un documento Markdown en una colección."
+      },
+      "timeout_seconds": 60,
       "fields": [
         {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
+          "key": "collection",
+          "type": "string",
+          "required": true,
+          "label": {
+            "en": "Collection",
+            "fr": "Collection",
+            "de": "Sammlung",
+            "es": "Colección"
+          },
+          "description": {
+            "en": "Its name exactly as in Outline (e.g. Home).",
+            "fr": "Son nom exactement comme dans Outline (ex. Maison).",
+            "de": "Der Name genau wie in Outline (z. B. Zuhause).",
+            "es": "Su nombre exactamente como en Outline (p. ej. Casa)."
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "required": true,
+          "label": {
+            "en": "Title",
+            "fr": "Titre",
+            "de": "Titel",
+            "es": "Título"
+          }
+        },
+        {
+          "key": "text",
+          "type": "string",
+          "required": false,
+          "label": {
+            "en": "Text (optional)",
+            "fr": "Texte (facultatif)",
+            "de": "Text (optional)",
+            "es": "Texto (opcional)"
+          },
+          "description": {
+            "en": "Markdown text.",
+            "fr": "Texte Markdown.",
+            "de": "Markdown-Text.",
+            "es": "Texto Markdown."
+          }
         }
       ],
       "outputs": [
         {
-          "key": "signalled",
+          "key": "document_id",
+          "type": "string",
+          "label": {
+            "en": "Document id",
+            "fr": "Identifiant du document",
+            "de": "Dokument-ID",
+            "es": "Id. del documento"
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "label": {
+            "en": "Document title",
+            "fr": "Titre du document",
+            "de": "Dokumenttitel",
+            "es": "Título del documento"
+          }
+        },
+        {
+          "key": "url",
+          "type": "string",
+          "label": {
+            "en": "Document address",
+            "fr": "Adresse du document",
+            "de": "Adresse des Dokuments",
+            "es": "Dirección del documento"
+          }
+        }
+      ]
+    },
+    {
+      "key": "append_line",
+      "label": {
+        "en": "Add a line to an Outline document",
+        "fr": "Ajouter une ligne à un document Outline",
+        "de": "Zeile zu einem Outline-Dokument hinzufügen",
+        "es": "Añadir una línea a un documento de Outline"
+      },
+      "description": {
+        "en": "Adds a line at the end of a document (a journal), and creates it at its first line if a collection is given.",
+        "fr": "Ajoute une ligne à la fin d'un document (un journal), et le crée à sa première ligne si une collection est indiquée.",
+        "de": "Fügt am Ende eines Dokuments (eines Journals) eine Zeile hinzu und erstellt es bei der ersten Zeile, wenn eine Sammlung angegeben ist.",
+        "es": "Añade una línea al final de un documento (un diario) y lo crea con su primera línea si se indica una colección."
+      },
+      "timeout_seconds": 60,
+      "fields": [
+        {
+          "key": "document",
+          "type": "string",
+          "required": true,
+          "label": {
+            "en": "Document",
+            "fr": "Document",
+            "de": "Dokument",
+            "es": "Documento"
+          },
+          "placeholder": {
+            "en": "e.g. Boiler journal",
+            "fr": "ex. Journal chaudière",
+            "de": "z. B. Heizungsjournal",
+            "es": "p. ej. Diario de la caldera"
+          },
+          "description": {
+            "en": "Its exact title, or its address in Outline.",
+            "fr": "Son titre exact, ou son adresse dans Outline.",
+            "de": "Sein genauer Titel oder seine Adresse in Outline.",
+            "es": "Su título exacto, o su dirección en Outline."
+          }
+        },
+        {
+          "key": "line",
+          "type": "string",
+          "required": true,
+          "label": {
+            "en": "Line",
+            "fr": "Ligne",
+            "de": "Zeile",
+            "es": "Línea"
+          }
+        },
+        {
+          "key": "add_time",
           "type": "boolean",
-          "label": { "en": "Device signalled", "fr": "Appareil signalé" }
+          "required": false,
+          "default": true,
+          "label": {
+            "en": "Start with the date and time",
+            "fr": "Commencer par la date et l'heure",
+            "de": "Mit Datum und Uhrzeit beginnen",
+            "es": "Empezar con la fecha y la hora"
+          }
+        },
+        {
+          "key": "collection",
+          "type": "string",
+          "required": false,
+          "label": {
+            "en": "Collection if the document is created (optional)",
+            "fr": "Collection si le document est créé (facultatif)",
+            "de": "Sammlung, falls das Dokument erstellt wird (optional)",
+            "es": "Colección si se crea el documento (opcional)"
+          },
+          "description": {
+            "en": "Without it, a missing document is an error. Its name exactly as in Outline.",
+            "fr": "Sans elle, un document absent est une erreur. Son nom exactement comme dans Outline.",
+            "de": "Ohne sie ist ein fehlendes Dokument ein Fehler. Der Name genau wie in Outline.",
+            "es": "Sin ella, un documento que no existe es un error. Su nombre exactamente como en Outline."
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "document_id",
+          "type": "string",
+          "label": {
+            "en": "Document id",
+            "fr": "Identifiant du document",
+            "de": "Dokument-ID",
+            "es": "Id. del documento"
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "label": {
+            "en": "Document title",
+            "fr": "Titre du document",
+            "de": "Dokumenttitel",
+            "es": "Título del documento"
+          }
+        },
+        {
+          "key": "url",
+          "type": "string",
+          "label": {
+            "en": "Document address",
+            "fr": "Adresse du document",
+            "de": "Adresse des Dokuments",
+            "es": "Dirección del documento"
+          }
+        },
+        {
+          "key": "created",
+          "type": "boolean",
+          "label": {
+            "en": "Document created",
+            "fr": "Document créé",
+            "de": "Dokument erstellt",
+            "es": "Documento creado"
+          }
+        }
+      ]
+    },
+    {
+      "key": "search_documents",
+      "label": {
+        "en": "Search Outline",
+        "fr": "Rechercher dans Outline",
+        "de": "In Outline suchen",
+        "es": "Buscar en Outline"
+      },
+      "description": {
+        "en": "Searches the text of the documents: the best match goes to the next actions (e.g. a message).",
+        "fr": "Cherche dans le texte des documents : le meilleur résultat passe aux actions suivantes (ex. un message).",
+        "de": "Durchsucht den Text der Dokumente: Der beste Treffer geht an die nächsten Aktionen (z. B. eine Nachricht).",
+        "es": "Busca en el texto de los documentos: el mejor resultado pasa a las acciones siguientes (p. ej. un mensaje)."
+      },
+      "timeout_seconds": 60,
+      "fields": [
+        {
+          "key": "query",
+          "type": "string",
+          "required": true,
+          "label": {
+            "en": "Words to search for",
+            "fr": "Mots à rechercher",
+            "de": "Suchbegriffe",
+            "es": "Palabras que buscar"
+          }
+        },
+        {
+          "key": "collection",
+          "type": "string",
+          "required": false,
+          "label": {
+            "en": "Collection (empty: all)",
+            "fr": "Collection (vide : toutes)",
+            "de": "Sammlung (leer: alle)",
+            "es": "Colección (vacío: todas)"
+          },
+          "description": {
+            "en": "Its name exactly as in Outline (e.g. Home).",
+            "fr": "Son nom exactement comme dans Outline (ex. Maison).",
+            "de": "Der Name genau wie in Outline (z. B. Zuhause).",
+            "es": "Su nombre exactamente como en Outline (p. ej. Casa)."
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "count",
+          "type": "number",
+          "label": {
+            "en": "Matching documents",
+            "fr": "Documents trouvés",
+            "de": "Gefundene Dokumente",
+            "es": "Documentos encontrados"
+          }
+        },
+        {
+          "key": "title",
+          "type": "string",
+          "label": {
+            "en": "Document title",
+            "fr": "Titre du document",
+            "de": "Dokumenttitel",
+            "es": "Título del documento"
+          }
+        },
+        {
+          "key": "url",
+          "type": "string",
+          "label": {
+            "en": "Document address",
+            "fr": "Adresse du document",
+            "de": "Adresse des Dokuments",
+            "es": "Dirección del documento"
+          }
+        },
+        {
+          "key": "excerpt",
+          "type": "string",
+          "label": {
+            "en": "Excerpt",
+            "fr": "Extrait",
+            "de": "Auszug",
+            "es": "Extracto"
+          }
+        },
+        {
+          "key": "collection",
+          "type": "string",
+          "label": {
+            "en": "Collection",
+            "fr": "Collection",
+            "de": "Sammlung",
+            "es": "Colección"
+          }
+        },
+        {
+          "key": "document_id",
+          "type": "string",
+          "label": {
+            "en": "Document id",
+            "fr": "Identifiant du document",
+            "de": "Dokument-ID",
+            "es": "Id. del documento"
+          }
         }
       ]
     }
   ],
   "widgets": [
     {
-      "key": "demo_status",
-      "label": { "en": "Demo status", "fr": "État de la démo" },
-      "description": {
-        "en": "Live temperature and plug power, plug connection and observed location.",
-        "fr": "Température et puissance en direct, connexion de la prise, position observée."
+      "key": "documents",
+      "label": {
+        "en": "Outline",
+        "fr": "Outline",
+        "de": "Outline",
+        "es": "Outline"
       },
-      "icon": "activity",
-      "action_timeout_seconds": 15
+      "description": {
+        "en": "Counters and the documents changed last.",
+        "fr": "Compteurs et derniers documents modifiés.",
+        "de": "Zähler und zuletzt geänderte Dokumente.",
+        "es": "Contadores y últimos documentos modificados."
+      },
+      "icon": "book-open",
+      "settings": [
+        {
+          "key": "collection",
+          "type": "string",
+          "required": false,
+          "label": {
+            "en": "Collection (empty: all)",
+            "fr": "Collection (vide : toutes)",
+            "de": "Sammlung (leer: alle)",
+            "es": "Colección (vacío: todas)"
+          },
+          "description": {
+            "en": "Only the documents of this collection.",
+            "fr": "Seulement les documents de cette collection.",
+            "de": "Nur die Dokumente dieser Sammlung.",
+            "es": "Solo los documentos de esta colección."
+          }
+        },
+        {
+          "key": "hide_counters",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "label": {
+            "en": "Hide the counters",
+            "fr": "Masquer les compteurs",
+            "de": "Zähler ausblenden",
+            "es": "Ocultar los contadores"
+          }
+        }
+      ]
     }
   ]
 }

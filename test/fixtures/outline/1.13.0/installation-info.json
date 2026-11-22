@@ -1,0 +1,19 @@
+{
+  "method": "installation.info",
+  "request": {},
+  "status": 200,
+  "headers": {
+    "content-type": "application/json; charset=utf-8",
+    "x-content-type-options": "nosniff"
+  },
+  "body": {
+    "data": {
+      "version": "1.13.0",
+      "latestVersion": "1.13.0",
+      "versionsBehind": 0
+    },
+    "policies": [],
+    "status": 200,
+    "ok": true
+  }
+}

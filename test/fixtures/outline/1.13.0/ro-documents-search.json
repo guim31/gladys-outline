@@ -1,0 +1,24 @@
+{
+  "method": "documents.search",
+  "request": {
+    "query": "x",
+    "limit": 1
+  },
+  "status": 200,
+  "headers": {
+    "content-type": "application/json; charset=utf-8",
+    "x-content-type-options": "nosniff"
+  },
+  "body": {
+    "pagination": {
+      "limit": 1,
+      "offset": 0,
+      "nextPath": "/api/documents.search?limit=1&offset=1",
+      "total": 0
+    },
+    "data": [],
+    "policies": [],
+    "status": 200,
+    "ok": true
+  }
+}

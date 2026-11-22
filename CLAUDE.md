@@ -32,15 +32,20 @@ pushing.
 
 ```
 index.js                          SDK wiring only: handlers registered before connect()
-src/devices/index.js              registry of the device blueprints + dispatch helpers
-src/devices/<type>.js             one device type per file (buildDevice, onPoll, onSetValue...)
+src/app.js                        registers every SDK handler on the hub (also used by the tests)
+src/hub.js                        the link to Outline: reads, states, trigger, scene actions, status
+src/outline/client.js             the RPC calls (documents.list/info/search/create/update, collections.list)
+src/outline/model.js              documents summarized, collection and document lookup, journal lines
+src/devices.js                    the "Outline" device and its states
 src/scenes.js                     scene action handlers (manifest `scene_actions`)
-src/widgets.js                    dashboard widget handlers (manifest `widgets`)
+src/widgets.js                    the "documents" dashboard widget
+src/store.js                      /data/outline-state.json: the newest change seen by the trigger
+src/texts.js                      every text the container produces, in en/fr/de/es
 src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
-src/weather.js                    example driver (Open-Meteo)
 gladys-assistant-integration.json manifest: name, config_schema, actions, image...
-docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
-test/                             node --test, against the SDK's fake Gladys (integration-sdk/testing)
+docs/{en,fr,de,es}.md             user documentation, re-hosted by Gladys (en and fr mandatory)
+test/                             node --test, against the SDK's fake Gladys and a fake Outline
+test/fixtures/outline/1.13.0/     answers recorded on a real Outline (outlinewiki/outline)
 .github/scripts/release.mjs       release helpers (manifest bump, changelog), tested in test/
 ```
 
@@ -78,8 +83,8 @@ test/                             node --test, against the SDK's fake Gladys (in
   `type: "provider"`: 5.1.0). `test/manifest.test.js` ties the manifest to the
   code (defaults, action, scene and widget handlers): change both sides
   together.
-- **User-facing text** is bilingual (English and French): action messages,
-  manifest texts, and `docs/en.md` / `docs/fr.md`, kept in sync.
+- **User-facing text** is in English, French, German and Spanish: action
+  messages, manifest texts, and `docs/{en,fr,de,es}.md`, kept in sync.
 - **Style.** Prettier formats, ESLint catches mistakes. Comments explain why,
   in English. Tests never touch the network.
 
@@ -259,3 +264,36 @@ long, et sur un « Sie »/« Ihr… » de politesse en allemand. Le store exige 
 - Docs `en`, `fr`, `de`, `es` avec les mêmes sections.
 - Chauffe, ouverture, sécurité : ne rien rendre pilotable « comme un thermostat » ou par un assistant
   vocal quand une erreur serait dangereuse (leçon d'OctoPrint).
+
+## Outline (faits vérifiés sur Outline 1.13.0, `outlinewiki/outline`, le 22/11/2026)
+
+- API RPC : `POST /api/<méthode>`, corps JSON, `Authorization: Bearer ol_api_…` (clé personnelle, Settings → API &
+  Apps). Succès `{ data, pagination?, ok: true }` ; échec `{ ok: false, error, status, message }` avec le vrai code
+  HTTP : 401 clé fausse ou révoquée (`Unable to decode token`), 403 clé dont les scopes n'autorisent pas la méthode
+  (`API key does not have access to this resource`) **ou id de collection inconnu** (`Authorization error`), 404,
+  400 `validation_error`, 429.
+- Les listes ont `pagination.total` (sauf `documents.search_titles`) : `documents.list` trié par `updatedAt` avec
+  `limit: 25` donne à la fois le nombre de documents et les derniers modifiés. `limit` vaut 100 au plus.
+  `documents.list` ignore les brouillons.
+- **`documents.update` avec `append: true` colle le texte tel quel, sans saut de ligne** : ajouter `\n\n` devant.
+- `documents.create` exige `collectionId` pour publier (`publish: true`), et un texte vide est accepté.
+- Un document porte `url` relative (`/doc/<slug>-<urlId>`), `updatedBy.name`, `collectionId`, `createdAt`,
+  `updatedAt`. `documents.info` prend l'UUID ou l'`urlId` de 10 caractères (un id illisible : 400, absent : 404).
+- `documents.search` rend `{ ranking, context, document }`, le `context` avec des `<b>` autour des mots trouvés.
+- Limites de débit par IP (actives par défaut en auto-hébergé) : 1000 requêtes/min au total ; 100/min pour
+  documents.list, search, search_titles et update ; 25/min pour documents.create.
+- **fetch retire `Authorization` sur une redirection vers une autre origine** (http → https d'un Outline en
+  `FORCE_HTTPS`, actif par défaut) : la clé arrive absente et Outline répond 401. Le client passe en
+  `redirect: 'manual'`, suit seul le passage http → https du même hôte et garde l'adresse https ; toute autre
+  redirection est signalée.
+- `documents.search_titles` n'a pas de total et trie par date de modification : un titre exact peut se cacher
+  derrière plus de 25 titres plus longs, d'où la pagination (100 par page, 5 pages au plus).
+- Titre de document : 100 caractères au plus (`DocumentValidation.maxTitleLength`).
+- Version : `installation.info` (auto-hébergé seulement), facultative (`?` sur l'appareil).
+- Les webhooks d'Outline demandent une URL joignable depuis Outline : non utilisés, lecture périodique.
+- Le cœur filtre les déclencheurs par égalité stricte : `collection` du déclencheur = nom exact de la collection.
+  Le widget et les actions, calculés dans le conteneur, comparent sans casse.
+- Instance de test : `postgres:16-alpine` + `redis:7-alpine` + `outlinewiki/outline` sur un réseau en pont, sans
+  fournisseur d'authentification : `POST /api/installation.create` (`teamName`, `userName`, `userEmail`, monté
+  seulement en auto-hébergé, sur une base vide) crée l'espace et ouvre une session (cookie `accessToken`), puis
+  `apiKeys.create` (`scope: ["read"]` pour une clé en lecture seule).
