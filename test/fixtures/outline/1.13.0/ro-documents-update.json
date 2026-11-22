@@ -1,0 +1,19 @@
+{
+  "method": "documents.update",
+  "request": {
+    "id": "f7258c5c-bdc7-49b0-bd03-61d65bbf1407",
+    "text": "x",
+    "append": true
+  },
+  "status": 403,
+  "headers": {
+    "content-type": "application/json; charset=utf-8",
+    "x-content-type-options": "nosniff"
+  },
+  "body": {
+    "ok": false,
+    "error": "authorization_error",
+    "status": 403,
+    "message": "API key does not have access to this resource"
+  }
+}

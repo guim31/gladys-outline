@@ -1,0 +1,115 @@
+{
+  "method": "documents.search_titles",
+  "request": {
+    "query": "Alarme",
+    "limit": 5
+  },
+  "status": 200,
+  "headers": {
+    "content-type": "application/json; charset=utf-8",
+    "x-content-type-options": "nosniff"
+  },
+  "body": {
+    "pagination": {
+      "limit": 5,
+      "offset": 0,
+      "nextPath": "/api/documents.search_titles?limit=5&offset=5"
+    },
+    "data": [
+      {
+        "id": "5c6952de-6891-4295-9c6d-d21af29d9147",
+        "url": "/doc/alarme-eet1sizUeC",
+        "path": "/doc/alarme-eet1sizUeC",
+        "urlId": "eet1sizUeC",
+        "title": "Alarme",
+        "text": "Codes et zones de l alarme.",
+        "icon": null,
+        "color": null,
+        "tasks": {
+          "completed": 0,
+          "total": 0
+        },
+        "language": null,
+        "createdAt": "2026-11-22T11:28:16.550Z",
+        "createdBy": {
+          "id": "95db2ae7-cf8c-4a42-8a8e-8b7e006a9cd6",
+          "name": "Alice Martin",
+          "avatarUrl": null,
+          "color": "#2930FF",
+          "role": "admin",
+          "isSuspended": false,
+          "createdAt": "2026-11-22T11:27:37.512Z",
+          "updatedAt": "2026-11-22T11:27:37.526Z",
+          "deletedAt": null,
+          "lastActiveAt": "2026-11-22T11:27:37.525Z",
+          "timezone": null
+        },
+        "updatedAt": "2026-11-22T11:28:16.550Z",
+        "updatedBy": {
+          "id": "95db2ae7-cf8c-4a42-8a8e-8b7e006a9cd6",
+          "name": "Alice Martin",
+          "avatarUrl": null,
+          "color": "#2930FF",
+          "role": "admin",
+          "isSuspended": false,
+          "createdAt": "2026-11-22T11:27:37.512Z",
+          "updatedAt": "2026-11-22T11:27:37.526Z",
+          "deletedAt": null,
+          "lastActiveAt": "2026-11-22T11:27:37.525Z",
+          "timezone": null
+        },
+        "publishedAt": "2026-11-22T11:28:16.577Z",
+        "archivedAt": null,
+        "deprecatedReason": null,
+        "deletedAt": null,
+        "collaboratorIds": ["95db2ae7-cf8c-4a42-8a8e-8b7e006a9cd6"],
+        "revision": 2,
+        "fullWidth": false,
+        "preferences": null,
+        "collectionId": "28ebba8e-275d-41a7-aa6a-38850d040df3",
+        "parentDocumentId": null,
+        "isCollectionDeleted": false,
+        "ownerId": null,
+        "templateId": null,
+        "insightsEnabled": true,
+        "popularityScore": 0
+      }
+    ],
+    "policies": [
+      {
+        "id": "5c6952de-6891-4295-9c6d-d21af29d9147",
+        "abilities": {
+          "read": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "update": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "delete": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "move": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "duplicate": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "download": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "star": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "unstar": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "subscribe": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "unsubscribe": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "share": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "archive": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "pin": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "manageUsers": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "restore": false,
+          "updateDeprecatedReason": false,
+          "listRevisions": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "listViews": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "comment": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "publish": false,
+          "createChildDocument": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "updateInsights": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "unpin": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "pinToHome": true,
+          "permanentDelete": false,
+          "unarchive": false,
+          "unpublish": true
+        }
+      }
+    ],
+    "status": 200,
+    "ok": true
+  }
+}

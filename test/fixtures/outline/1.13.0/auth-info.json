@@ -1,0 +1,132 @@
+{
+  "method": "auth.info",
+  "request": {},
+  "status": 200,
+  "headers": {
+    "content-type": "application/json; charset=utf-8",
+    "x-content-type-options": "nosniff"
+  },
+  "body": {
+    "data": {
+      "user": {
+        "id": "95db2ae7-cf8c-4a42-8a8e-8b7e006a9cd6",
+        "name": "Alice Martin",
+        "avatarUrl": null,
+        "color": "#2930FF",
+        "role": "admin",
+        "isSuspended": false,
+        "createdAt": "2026-11-22T11:27:37.512Z",
+        "updatedAt": "2026-11-22T11:27:37.526Z",
+        "deletedAt": null,
+        "lastActiveAt": "2026-11-22T11:27:37.525Z",
+        "timezone": null,
+        "email": "alice@example.com",
+        "language": "en_US",
+        "preferences": null,
+        "notificationSettings": {}
+      },
+      "team": {
+        "id": "df1769cd-0ab4-461f-8754-e4bfd6603519",
+        "name": "Maison",
+        "description": null,
+        "avatarUrl": null,
+        "sharing": true,
+        "memberCollectionCreate": true,
+        "memberTeamCreate": true,
+        "defaultCollectionId": null,
+        "documentEmbeds": true,
+        "guestSignin": true,
+        "passkeysEnabled": true,
+        "subdomain": "maison",
+        "domain": null,
+        "url": "http://192.0.2.50:3000",
+        "defaultUserRole": "member",
+        "inviteRequired": false,
+        "allowedDomains": [],
+        "preferences": {
+          "membersCanInvite": true
+        },
+        "guidanceMCP": null,
+        "plan": "community",
+        "entitlements": []
+      },
+      "groups": [],
+      "groupUsers": [],
+      "availableTeams": [
+        {
+          "id": "df1769cd-0ab4-461f-8754-e4bfd6603519",
+          "name": "Maison",
+          "avatarUrl": null,
+          "url": "http://192.0.2.50:3000",
+          "isSignedIn": true
+        }
+      ]
+    },
+    "policies": [
+      {
+        "id": "df1769cd-0ab4-461f-8754-e4bfd6603519",
+        "abilities": {
+          "createApiKey": true,
+          "listApiKeys": false,
+          "read": true,
+          "update": true,
+          "delete": false,
+          "createAttachment": true,
+          "createAuthenticationProvider": true,
+          "createCollection": true,
+          "importCollection": true,
+          "createPersonalCollection": true,
+          "share": true,
+          "createDocument": true,
+          "createTemplate": true,
+          "createComment": true,
+          "listComments": true,
+          "createFileOperation": true,
+          "createExport": true,
+          "createImport": true,
+          "listImports": true,
+          "createIntegration": true,
+          "createOAuthClient": true,
+          "listOAuthClients": true,
+          "listOAuthAuthentications": true,
+          "createShare": true,
+          "listShares": true,
+          "listUsers": true,
+          "inviteUser": true,
+          "addGuest": false,
+          "readEmail": true,
+          "readTemplate": true,
+          "createTeam": false,
+          "audit": false,
+          "externalGroupSync": false,
+          "setDefaultShareExpiry": false,
+          "updateTemplate": true,
+          "createGroup": true,
+          "listGroups": true,
+          "createWebhookSubscription": true,
+          "listWebhookSubscription": true,
+          "createUserPasskey": true,
+          "createEmoji": true
+        }
+      },
+      {
+        "id": "95db2ae7-cf8c-4a42-8a8e-8b7e006a9cd6",
+        "abilities": {
+          "listApiKeys": true,
+          "read": true,
+          "update": true,
+          "delete": true,
+          "readDetails": true,
+          "readEmail": true,
+          "activate": false,
+          "suspend": false,
+          "promote": false,
+          "demote": false,
+          "resendInvite": false
+        }
+      }
+    ],
+    "status": 200,
+    "ok": true
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "method": "collections.list",
+  "request": {
+    "limit": 100
+  },
+  "status": 200,
+  "headers": {
+    "content-type": "application/json; charset=utf-8",
+    "x-content-type-options": "nosniff"
+  },
+  "body": {
+    "pagination": {
+      "limit": 100,
+      "offset": 0,
+      "nextPath": "/api/collections.list?limit=100&offset=100",
+      "total": 2
+    },
+    "data": [
+      {
+        "id": "04ec56b8-04ee-4e7c-97ce-8d7434dd9023",
+        "url": "/collection/jardin-jBq1bhQFYc",
+        "urlId": "jBq1bhQFYc",
+        "name": "Jardin",
+        "description": null,
+        "sort": {
+          "field": "index",
+          "direction": "asc"
+        },
+        "icon": null,
+        "color": null,
+        "createdAt": "2026-11-22T11:28:13.651Z",
+        "updatedAt": "2026-11-22T11:28:13.651Z",
+        "index": "8",
+        "sharing": true,
+        "commenting": null,
+        "templateManagement": "admin",
+        "permission": null,
+        "ownerId": null,
+        "deletedAt": null,
+        "archivedAt": null,
+        "deprecatedReason": null
+      },
+      {
+        "id": "28ebba8e-275d-41a7-aa6a-38850d040df3",
+        "url": "/collection/maison-PYCr0f9oiY",
+        "urlId": "PYCr0f9oiY",
+        "name": "Maison",
+        "description": null,
+        "sort": {
+          "field": "index",
+          "direction": "asc"
+        },
+        "icon": null,
+        "color": null,
+        "createdAt": "2026-11-22T11:28:12.060Z",
+        "updatedAt": "2026-11-22T11:28:12.060Z",
+        "index": "P",
+        "sharing": true,
+        "commenting": null,
+        "templateManagement": "admin",
+        "permission": null,
+        "ownerId": null,
+        "deletedAt": null,
+        "archivedAt": null,
+        "deprecatedReason": null
+      }
+    ],
+    "policies": [
+      {
+        "id": "04ec56b8-04ee-4e7c-97ce-8d7434dd9023",
+        "abilities": {
+          "read": true,
+          "update": true,
+          "delete": true,
+          "move": true,
+          "duplicate": true,
+          "download": true,
+          "star": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "unstar": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "readDocument": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "subscribe": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "unsubscribe": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "share": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "shareDocument": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "updateDocument": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "createDocument": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "deleteDocument": ["81af3c09-3b67-44e0-a656-2c7c452db0d2"],
+          "createTemplate": true,
+          "manageTemplate": true,
+          "archive": true,
+          "pin": true,
+          "manageUsers": true,
+          "export": true,
+          "restore": false,
+          "updateDeprecatedReason": false
+        }
+      },
+      {
+        "id": "28ebba8e-275d-41a7-aa6a-38850d040df3",
+        "abilities": {
+          "read": true,
+          "update": true,
+          "delete": true,
+          "move": true,
+          "duplicate": true,
+          "download": true,
+          "star": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "unstar": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "readDocument": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "subscribe": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "unsubscribe": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "share": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "shareDocument": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "updateDocument": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "createDocument": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "deleteDocument": ["e43f10f7-09dc-4adf-8931-91b33ea8856f"],
+          "createTemplate": true,
+          "manageTemplate": true,
+          "archive": true,
+          "pin": true,
+          "manageUsers": true,
+          "export": true,
+          "restore": false,
+          "updateDeprecatedReason": false
+        }
+      }
+    ],
+    "status": 200,
+    "ok": true
+  }
+}

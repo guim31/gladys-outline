@@ -1,0 +1,20 @@
+{
+  "method": "documents.create",
+  "request": {
+    "title": "X",
+    "text": "x",
+    "collectionId": "04ec56b8-04ee-4e7c-97ce-8d7434dd9023",
+    "publish": true
+  },
+  "status": 403,
+  "headers": {
+    "content-type": "application/json; charset=utf-8",
+    "x-content-type-options": "nosniff"
+  },
+  "body": {
+    "ok": false,
+    "error": "authorization_error",
+    "status": 403,
+    "message": "API key does not have access to this resource"
+  }
+}

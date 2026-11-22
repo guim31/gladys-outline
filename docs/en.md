@@ -1,61 +1,148 @@
-# Demo Devices Template
+# Outline
 
-This is the user documentation of the integration. Gladys re-hosts this file
-and shows a permanent **Documentation** link to it in the Configuration screen
-(in the user's language, with English as the fallback) — it is when
-configuring that the user needs it most. Keep the short onboarding hints in
-the `section` blocks of the manifest `config_schema`; put the long
-step-by-step (screenshots, troubleshooting…) here.
+Connect Gladys to [Outline](https://www.getoutline.com), the team wiki: follow
+its counters and the document changed last, react when a document is created
+or updated, search it from your scenes, write documents, and keep a journal
+(the boiler, the alarm, the garden…) that Gladys fills in line by line. A
+self-hosted Outline stays on your local network: Gladys talks directly to it.
+Outline Cloud works the same way, with its address.
 
-## What you get
+Tested against a real Outline 1.13.0 (the official Docker image). Feedback
+welcome on the Gladys forum.
 
-Six demo devices show up after installation: a weather station (real data
-from Open-Meteo), a switch, a dimmable light, a smart plug with power
-metering, a motion sensor and a camera.
+## Prerequisites
+
+- Gladys Assistant 5.1 or later.
+- Outline reachable from the Gladys machine (self-hosted), or an Outline Cloud
+  workspace.
+- An API key: in Outline, open **Settings → API & Apps** (or **Preferences →
+  API keys**), then create a key. Leave its scopes empty for full access. A
+  key limited to reading works for the device, the widget, the trigger and the
+  search, not for the actions that write. Copy the key (it starts with
+  `ol_api_`): it is shown once. The integration sees what the owner of the key
+  sees.
 
 ## Configuration
 
 1. Open the **Configuration** tab of the integration.
-2. Set the **latitude** and **longitude** the demo weather station should
-   observe (they default to Paris), and pick your temperature unit.
-   The **refresh interval** sets how often the weather station and the
-   plug's power are read: every 5 minutes by default, every minute at most.
-3. Save: the devices appear in the **Discovery** tab, ready to be added.
+2. In **Outline address**, enter the address you open Outline at, for example
+   `192.168.1.50:3000`, `https://wiki.example.org` or
+   `https://<team>.getoutline.com`.
+3. Paste the **API key**.
+4. **Read Outline every**: 5, 15 (default), 30 or 60 minutes. Changed documents
+   are announced at the next read.
+5. **Language of names and messages** sets the feature names (fixed when a
+   device is added) and the texts of the integration. French by default.
+6. Save, then use **Test the connection**: it shows the number of documents and
+   collections.
+7. In the **Discovery** tab, add the **Outline** device.
 
-The **Prefer the local connection** toggle drives the demo plug: it reports
-the channel it actually uses as a badge (local or cloud), with an orange dot
-when it runs degraded (local refused, cloud fallback).
+## Devices
 
-## Actions
+**Outline** (one device):
 
-- **Test the weather provider** — performs a live request to Open-Meteo and
-  shows the current temperature and humidity under the button.
-- **Identify a device** — pick one of your devices in the list and it will
-  signal itself (the demo light "blinks" in the logs).
+| Feature                 | Value                                         |
+| ----------------------- | --------------------------------------------- |
+| Reachable               | 1 when Outline answers, 0 otherwise           |
+| Documents               | published documents the key may read          |
+| Collections             | collections the key may read                  |
+| Latest changed document | title of the document saved most lately       |
+| Latest change by        | who saved it                                  |
+| Latest change at        | when (date and time, in the Gladys time zone) |
 
-## Scenes
+The counters keep their history. The device keeps its identity when the
+address of Outline changes.
 
-The integration adds its own cards to the scene editor (Gladys 5.1 or
-later), under the **Integrations** category:
+## Dashboard widget
 
-- **Motion detected** (trigger) — starts the scene when a demo motion sensor
-  sees something move. Optionally pick the sensor and what moved (person,
-  animal); left empty, any detection matches. The following actions can
-  read what moved with `{{triggerEvent.data.target}}`.
-- **Identify a device** (action) — makes the chosen device signal itself.
-  It returns whether the device could signal itself, so the following
-  actions can depend on it.
+**Outline**: two tiles (documents, collections) and the eight documents
+changed last, with their collection, their author and the time of the change.
+In the widget settings, **Collection** keeps the documents of one collection
+(its name, case aside); the tile then counts them. **Hide the counters** keeps
+the list only. When Outline is reached over https, each document opens in
+Outline.
 
-## Dashboard
+## Scene triggers
 
-Add the **Demo status** widget to a dashboard: it shows the live
-temperature of the weather station and the power of the office plug, the
-connection the plug currently uses (orange when degraded) and the observed
-location. Its **Identify the light** button makes the demo light signal
-itself.
+- **Outline document created or updated**: a document is published or saved
+  in Outline. Filters: **Collection** (its name exactly as in Outline, e.g.
+  `Home`) and **Change** (created, updated, or empty: both). Empty filters
+  match every document.
+
+Variables: **Document title**, **Collection**, **Change** (`created` or
+`updated`), **Document address**, **Updated by** and **Document id**.
+
+The first read after the installation is silent: the documents already there
+are not announced. The documents written by this integration are never
+announced. At most ten documents are announced per read, the oldest first; the
+next ones wait for the next read. When the 25 documents read have all changed
+since the last read (an import), ten are announced and the rest is counted as
+seen.
+
+## Scene actions
+
+- **Create an Outline document**: **Collection** (its name), **Title**, and
+  optionally **Text** (Markdown). The document is published at once.
+- **Add a line to an Outline document**: **Document** (its exact title, case
+  aside, or its address in Outline) and **Line**. The line is added at the end
+  of the document, as a new paragraph, starting with the date and time unless
+  **Start with the date and time** is off. When no document has that title and
+  a **Collection** is given, the document is created there at its first line;
+  without a collection it is an error.
+- **Search Outline**: **Words to search for**, and optionally a **Collection**.
+  It returns the best match — **Document title**, **Document address**,
+  **Excerpt**, **Collection**, **Document id** — and **Matching documents**,
+  for the next actions of the scene (a message, a spoken answer). No match is
+  an error, shown in red.
+
+The first two return **Document id**, **Document title** and **Document
+address**; the second one also **Document created**.
+
+## Scene examples
+
+- **Boiler log**: when the boiler pressure drops below 1 bar → **Add a line to
+  an Outline document**, document "Boiler journal", collection `Home`, line
+  "Pressure below 1 bar".
+- **Know what changed**: trigger **Outline document created or updated**,
+  collection `Procedures` → send a message "{{triggerEvent.data.updated_by}}
+  updated {{triggerEvent.data.title}}".
+- **Ask the wiki**: when you send "wifi" to Gladys → **Search Outline** for
+  "wifi" → send the excerpt and the address of the document found.
+- **Holiday report**: when the alarm is turned off after a holiday → **Create
+  an Outline document** in `Reports`, titled "Holidays 2026".
 
 ## Troubleshooting
 
-The integration logs everything it does: check the integration logs from the
-Gladys UI (or `docker logs` on the host) with `LOG_LEVEL=debug` for the full
-detail.
+- **"Outline did not accept the API key"**: the key was revoked, has expired
+  or was mistyped. Create a new one in **Settings → API & Apps**.
+- **"The API key may not do this"**: the scopes of the key do not allow
+  writing, or its owner may not edit that collection. Use a key without scopes,
+  or give its owner the rights.
+- **"Outline limits the requests of this key"**: Outline answered 429. The
+  integration tries again at the next read; space out the scenes that write.
+- **"Outline does not answer"**: check the address and the port from the Gladys
+  machine. The container uses a bridge network: `localhost` is the container
+  itself, enter the IP address of the server instead.
+- **"This address does not answer like Outline"**: a proxy login page answers
+  instead of Outline. Enter the address of the home of Outline.
+- The version shows `?` on the device: Outline Cloud does not give it. Nothing
+  else is affected.
+- To see more in the logs of the integration, set `LOG_LEVEL=debug`.
+
+## Limits
+
+- One Outline workspace, seen with the permissions of its API key. Drafts are
+  neither counted nor announced.
+- The trigger fires at the next read (15 minutes by default), not instantly:
+  the integration does not receive Outline webhooks, which need an address
+  reachable from Outline. Documents deleted, archived or moved are not
+  announced; a document saved several times between two reads is announced
+  once.
+- A read is two requests (the 25 documents changed last with the number of
+  documents, and the collections), plus the version once. Outline limits each
+  address to 1000 requests a minute, 100 a minute for listing, searching and
+  updating documents, and 25 a minute for creating them.
+- The trigger and the actions name collections by their name: renaming a
+  collection in Outline needs the scenes to follow.
+- The integration never deletes, archives nor moves anything in Outline.
+- Not affiliated with Outline or General Outline, Inc.
