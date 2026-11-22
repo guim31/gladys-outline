@@ -33,6 +33,10 @@ export function createOutline() {
     down: false,
     html: false,
     rateLimited: false,
+    /** 'https': http is redirected to https (FORCE_HTTPS); 'elsewhere': to another host */
+    redirect: null,
+    /** an HTML error page of a reverse proxy, e.g. 502 */
+    proxyError: null,
     requests: [],
     clock: Date.parse('2026-11-22T11:30:00.000Z'),
     counter: 0,
@@ -104,9 +108,19 @@ export function createOutline() {
       return one(structuredClone(document));
     },
     'documents.search_titles': (body) => {
+      // Like Outline: the newest first, `limit` per page, no total.
       const query = String(body.query).toLowerCase();
-      const items = state.documents.filter((d) => d.title.toLowerCase().includes(query));
-      return json({ pagination: { limit: 25, offset: 0 }, data: items, policies: [], ok: true });
+      const limit = Math.min(Number(body.limit ?? 25), 100);
+      const offset = Number(body.offset ?? 0);
+      const items = state.documents
+        .filter((d) => d.title.toLowerCase().includes(query))
+        .sort(byNewest);
+      return json({
+        pagination: { limit, offset },
+        data: items.slice(offset, offset + limit),
+        policies: [],
+        ok: true,
+      });
     },
     'documents.search': (body) => {
       const query = String(body.query).toLowerCase();
@@ -170,7 +184,20 @@ export function createOutline() {
     const method = target.pathname.replace(/^\/api\//, '');
     const body = JSON.parse(init.body ?? '{}');
     const key = String(init.headers?.Authorization ?? '').replace(/^Bearer /, '');
-    state.requests.push({ method, body });
+    state.requests.push({ method, body, url: target.href, key });
+    if (state.redirect && target.protocol === 'http:') {
+      const location =
+        state.redirect === 'https'
+          ? `https://${target.host}${target.pathname}`
+          : `https://login.example.org/sso`;
+      return new Response('', { status: 308, headers: { location } });
+    }
+    if (state.proxyError) {
+      return new Response('<html><body>Bad Gateway</body></html>', {
+        status: state.proxyError,
+        headers: { 'content-type': 'text/html' },
+      });
+    }
     if (state.html || !target.pathname.startsWith('/api/')) {
       return new Response('<!doctype html><html><body>Not here</body></html>', {
         status: 404,

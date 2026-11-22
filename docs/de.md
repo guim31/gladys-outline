@@ -128,6 +128,10 @@ Dokuments** zurück; die zweite auch **Dokument erstellt**.
 - **„Outline begrenzt die Anfragen dieses Schlüssels“**: Outline hat mit 429
   geantwortet. Die Integration versucht es beim nächsten Lesen erneut; verteile
   die schreibenden Szenen zeitlich.
+- **„Outline antwortet unter einer anderen Adresse“**: Outline leitet auf
+  eine andere Adresse um (eine Anmeldeseite, eine andere Domain). Gib die
+  Adresse ein, die dein Browser zeigt. Ein einfacher Wechsel von http zu https
+  wird von selbst befolgt.
 - **„Outline antwortet nicht“**: Prüfe Adresse und Port vom Gladys-Rechner aus.
   Der Container nutzt ein Bridge-Netzwerk: `localhost` ist der Container
   selbst, gib stattdessen die IP-Adresse des Servers ein.

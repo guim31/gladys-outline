@@ -49,6 +49,8 @@ export const MAX_EVENTS_PER_READ = 10;
 const MAX_OWN = 200;
 // Reads after which a change whose event Gladys keeps refusing is given up.
 export const MAX_TRIES = 3;
+// Outline refuses a longer document title (DocumentValidation.maxTitleLength).
+export const MAX_TITLE = 100;
 
 /**
  * A failed action: Gladys shows its message in red. The message is the
@@ -229,6 +231,9 @@ export class Hub {
     clearInterval(this.refreshTimer);
     clearTimeout(this.widgetTimer);
     this.refreshTimer = null;
+    // A read announcing events, or a write: its mark must reach the disk.
+    await this.refreshing?.catch(() => {});
+    await this.writing;
     await this.store.flush();
   }
 
@@ -261,8 +266,8 @@ export class Hub {
     return this.config.url ?? '';
   }
 
-  #known() {
-    return this.seen?.instance === this.#instance ? this.seen : null;
+  #known(instance) {
+    return this.seen?.instance === instance ? this.seen : null;
   }
 
   #collectionNames() {
@@ -271,6 +276,8 @@ export class Hub {
 
   async #refreshOnce() {
     const client = this.client;
+    // The wiki this read is about, even if the address changes meanwhile.
+    const instance = this.#instance;
     if (this.stopped) {
       return;
     }
@@ -321,7 +328,7 @@ export class Hub {
     if (client !== this.client || this.stopped) {
       return; // reconfigured or stopped while a write finished
     }
-    await this.#announce(this.documents);
+    await this.#announce(this.documents, instance, recent.total);
     await this.updateConnectionStatus();
   }
 
@@ -362,9 +369,11 @@ export class Hub {
    * first. The first read of a wiki is a silent baseline: installing the
    * integration announces nothing already there.
    * @param {object[]} documents the documents changed last, the newest first
+   * @param {string} instance the address the documents were read at
+   * @param {number} total how many documents there are in all
    */
-  async #announce(documents) {
-    const known = this.#known();
+  async #announce(documents, instance, total) {
+    const known = this.#known(instance);
     let mark = known ? { at: known.at, ids: known.ids } : null;
     // The end of the last read that went through all its changes: a document
     // created after it is "created", even when its event waited a read.
@@ -380,8 +389,8 @@ export class Hub {
       const changes = documents.filter((d) => !seenBy(known, d)).reverse();
       const fresh = changes.filter((d) => !this.#isOwn(d));
       const pending = fresh.slice(0, MAX_EVENTS_PER_READ);
-      // Every document read changed: there may be more, unread.
-      const burst = changes.length >= BURST;
+      // Every document read changed, and there are more: some may be unread.
+      const burst = changes.length >= BURST && total > documents.length;
       if (burst) {
         logger.info(`${fresh.length}+ documents changed at once: ${pending.length} announced`);
       }
@@ -426,7 +435,7 @@ export class Hub {
     if (since !== known?.since) {
       this.createdIds.clear();
     }
-    this.seen = { instance: this.#instance, at: mark.at, ids: mark.ids, since };
+    this.seen = { instance, at: mark.at, ids: mark.ids, since };
     await this.#save();
   }
 
@@ -561,7 +570,8 @@ export class Hub {
     const states = buildWikiStates(
       this.gladys,
       {
-        reachable: this.failure === null,
+        // Outline answers a refused key or a rate limit: it is reachable.
+        reachable: !['unreachable', 'timeout', 'invalid', 'redirected'].includes(this.failure),
         counters: this.counters,
         latest: this.documents[0],
       },
@@ -669,6 +679,7 @@ export class Hub {
           unauthorized: 'unauthorized',
           forbidden: 'forbidden',
           rate_limited: 'rate_limited',
+          redirected: 'redirected',
           invalid: 'invalid_answer',
           http: 'error',
           not_found: 'invalid_answer',
@@ -783,7 +794,7 @@ export class Hub {
    */
   createDocument({ collection: rawCollection, title: rawTitle, text }) {
     return this.#serialize(async () => {
-      const title = typeof rawTitle === 'string' ? rawTitle.trim().slice(0, 255) : '';
+      const title = typeof rawTitle === 'string' ? rawTitle.trim().slice(0, MAX_TITLE) : '';
       if (!title) {
         throw new CommandError('title');
       }
@@ -812,10 +823,12 @@ export class Hub {
     if (ref.id) {
       return client.document(ref.id);
     }
+    if (!ref.title) {
+      return null; // an address that is not a document
+    }
     const wanted = nameKey(ref.title);
-    const matches = (await client.searchTitles(ref.title)).filter(
-      (d) => nameKey(d.title) === wanted,
-    );
+    const exact = (d) => nameKey(d.title) === wanted;
+    const matches = (await client.searchTitles(ref.title, { accept: exact })).filter(exact);
     if (matches.length <= 1 || !collectionName) {
       return matches[0] ?? null;
     }
@@ -831,7 +844,8 @@ export class Hub {
    */
   appendToDocument({ document: rawDocument, line, addTime, collection: rawCollection }) {
     return this.#serialize(async () => {
-      if (!parseDocumentRef(rawDocument).id && !parseDocumentRef(rawDocument).title) {
+      const typedRef = parseDocumentRef(rawDocument);
+      if (!typedRef.id && !typedRef.title && !typedRef.link) {
         throw new CommandError('document_missing');
       }
       const typed = typeof line === 'string' ? line.trim().slice(0, 5000) : '';
@@ -932,7 +946,16 @@ export class Hub {
     }
     const kind = err instanceof OutlineError ? err.kind : 'unreachable';
     const detail = String(err.message);
-    if (['unauthorized', 'forbidden', 'rate_limited', 'timeout', 'unreachable'].includes(kind)) {
+    if (
+      [
+        'unauthorized',
+        'forbidden',
+        'rate_limited',
+        'timeout',
+        'unreachable',
+        'redirected',
+      ].includes(kind)
+    ) {
       // A timeout: the request may have reached Outline, the document may be written.
       return new CommandError(kind);
     }

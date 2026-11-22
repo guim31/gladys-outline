@@ -120,6 +120,9 @@ address**; the second one also **Document created**.
   or give its owner the rights.
 - **"Outline limits the requests of this key"**: Outline answered 429. The
   integration tries again at the next read; space out the scenes that write.
+- **"Outline answers at another address"**: Outline redirects to another
+  address (a login page, another domain). Enter the address shown in your
+  browser. A plain move from http to https is followed on its own.
 - **"Outline does not answer"**: check the address and the port from the Gladys
   machine. The container uses a bridge network: `localhost` is the container
   itself, enter the IP address of the server instead.

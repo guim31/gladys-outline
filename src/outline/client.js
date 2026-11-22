@@ -27,10 +27,11 @@ export const DEFAULT_TIMEOUT = 15_000;
 export const WINDOW = 25;
 const PAGE = 100;
 const MAX_COLLECTION_PAGES = 10;
+const MAX_TITLE_PAGES = 5;
 
 export class OutlineError extends Error {
   /**
-   * @param {'unreachable' | 'unauthorized' | 'forbidden' | 'not_found' | 'rate_limited' | 'timeout' | 'http' | 'invalid' | 'rejected'} kind
+   * @param {'unreachable' | 'redirected' | 'unauthorized' | 'forbidden' | 'not_found' | 'rate_limited' | 'timeout' | 'http' | 'invalid' | 'rejected'} kind
    * @param {string} message never carries a credential
    * @param {number} [status]
    */
@@ -72,11 +73,12 @@ export class OutlineClient {
   }
 
   /** One RPC call: the whole answer, `{ data, pagination }`. */
-  async call(method, body = {}) {
+  async call(method, body = {}, redirects = 0) {
     let response;
     let raw;
+    const target = `${this.url}/api/${method}`;
     try {
-      response = await this.fetch(`${this.url}/api/${method}`, {
+      response = await this.fetch(target, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -85,7 +87,9 @@ export class OutlineClient {
         },
         body: JSON.stringify(body),
         signal: AbortSignal.timeout(this.timeout),
-        redirect: 'follow',
+        // fetch drops the key on a redirect to another origin (http -> https):
+        // redirects are handled below.
+        redirect: 'manual',
       });
       raw = await response.text();
     } catch (err) {
@@ -95,6 +99,19 @@ export class OutlineClient {
       const cause = err?.cause?.code ?? err?.cause?.message ?? err?.message ?? 'error';
       throw new OutlineError('unreachable', `Outline unreachable (${cause})`);
     }
+    if (response.status >= 300 && response.status < 400) {
+      const upgraded = this.#upgrade(target, method, response.headers.get('location'));
+      if (upgraded && redirects === 0) {
+        // The same server over https (FORCE_HTTPS): its address from now on.
+        this.url = upgraded;
+        return this.call(method, body, redirects + 1);
+      }
+      throw new OutlineError(
+        'redirected',
+        `HTTP ${response.status}: Outline answers at another address`,
+        response.status,
+      );
+    }
     let answer;
     try {
       answer = JSON.parse(raw);
@@ -102,6 +119,10 @@ export class OutlineClient {
       // An HTML page (not Outline, a wrong path, a proxy login page...).
       if (response.status === 429) {
         throw new OutlineError('rate_limited', 'HTTP 429', 429);
+      }
+      if (response.status >= 500) {
+        // A reverse proxy while Outline restarts (502, 503, 504).
+        throw new OutlineError('unreachable', `Outline unreachable (HTTP ${response.status})`);
       }
       throw new OutlineError(
         'invalid',
@@ -118,6 +139,35 @@ export class OutlineClient {
       throw new OutlineError('invalid', 'The answer has no data (is this Outline?)');
     }
     return answer;
+  }
+
+  /**
+   * The new base URL when a redirect only moves the same host from http to
+   * https (same path); null for any other redirect.
+   */
+  #upgrade(target, method, location) {
+    if (!location) {
+      return null;
+    }
+    let from;
+    let to;
+    try {
+      from = new URL(target);
+      to = new URL(location, target);
+    } catch {
+      return null;
+    }
+    const suffix = `/api/${method}`;
+    if (
+      from.protocol !== 'http:' ||
+      to.protocol !== 'https:' ||
+      to.hostname !== from.hostname ||
+      to.pathname !== from.pathname ||
+      !to.pathname.endsWith(suffix)
+    ) {
+      return null;
+    }
+    return `https://${to.host}${to.pathname.slice(0, -suffix.length)}`;
   }
 
   /** The version of a self-hosted Outline, or '' (Outline Cloud, an old one). */
@@ -190,10 +240,26 @@ export class OutlineClient {
     }
   }
 
-  /** Documents whose title matches, the best first. */
-  async searchTitles(query) {
-    const { data } = await this.call('documents.search_titles', { query, limit: 25 });
-    return Array.isArray(data) ? data.filter(isDocument) : [];
+  /**
+   * Documents whose title holds the query, 100 per request, until `accept`
+   * finds one (a title may hide behind many longer ones).
+   */
+  async searchTitles(query, { accept = () => false } = {}) {
+    const found = [];
+    for (let page = 0; page < MAX_TITLE_PAGES; page += 1) {
+      const { data } = await this.call('documents.search_titles', {
+        query,
+        limit: PAGE,
+        offset: page * PAGE,
+      });
+      const items = Array.isArray(data) ? data : [];
+      found.push(...items.filter(isDocument));
+      // Stop at the first page holding what the caller looks for.
+      if (items.length < PAGE || found.some(accept)) {
+        break;
+      }
+    }
+    return found;
   }
 
   /**

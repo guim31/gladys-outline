@@ -124,6 +124,9 @@ Las dos primeras devuelven **Id. del documento**, **Título del documento** y
 - **«Outline limita las solicitudes de esta clave»**: Outline respondió 429. La
   integración lo intenta de nuevo en la siguiente lectura; espacie las escenas
   que escriben.
+- **«Outline responde en otra dirección»**: Outline redirige a otra
+  dirección (una página de inicio de sesión, otro dominio). Introduzca la que
+  muestra su navegador. Un simple paso de http a https se sigue solo.
 - **«Outline no responde»**: compruebe la dirección y el puerto desde la
   máquina de Gladys. El contenedor usa una red en puente: `localhost` es el
   propio contenedor, introduzca en su lugar la dirección IP del servidor.

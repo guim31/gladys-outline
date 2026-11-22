@@ -52,6 +52,8 @@ export const STATUS_TEXT = {
     unauthorized: 'Outline did not accept the API key: check it, and that it has not expired.',
     forbidden: 'The API key may not read the documents: give it the read scopes, or none.',
     unreachable: 'Outline does not answer: check its address and that it is running.',
+    redirected:
+      'Outline answers at another address: enter the address of your browser, starting with https://.',
     rate_limited: 'Outline limits the requests of this key: the integration will try again later.',
     error: 'Outline answered with an error: see the logs of the integration.',
     invalid_answer: 'This address does not answer like Outline: check the address and the port.',
@@ -65,6 +67,8 @@ export const STATUS_TEXT = {
     forbidden:
       "La clé d'API ne peut pas lire les documents : donnez-lui les droits de lecture, ou aucune restriction.",
     unreachable: "Outline ne répond pas : vérifiez son adresse et qu'il est démarré.",
+    redirected:
+      'Outline répond à une autre adresse : saisissez celle de votre navigateur, commençant par https://.',
     rate_limited: "Outline limite les requêtes de cette clé : l'intégration réessaiera plus tard.",
     error: "Outline a répondu par une erreur : consultez les journaux de l'intégration.",
     invalid_answer: "Cette adresse ne répond pas comme Outline : vérifiez l'adresse et le port.",
@@ -78,6 +82,8 @@ export const STATUS_TEXT = {
     forbidden:
       'Der API-Schlüssel darf die Dokumente nicht lesen: Gib ihm Leserechte oder keine Einschränkung.',
     unreachable: 'Outline antwortet nicht: Prüfe die Adresse und ob es läuft.',
+    redirected:
+      'Outline antwortet unter einer anderen Adresse: Gib die deines Browsers ein, beginnend mit https://.',
     rate_limited:
       'Outline begrenzt die Anfragen dieses Schlüssels: Die Integration versucht es später erneut.',
     error: 'Outline hat mit einem Fehler geantwortet: Sieh dir die Logs der Integration an.',
@@ -92,6 +98,8 @@ export const STATUS_TEXT = {
     forbidden:
       'La clave de API no puede leer los documentos: dele permisos de lectura, o ninguna restricción.',
     unreachable: 'Outline no responde: compruebe su dirección y que esté en marcha.',
+    redirected:
+      'Outline responde en otra dirección: introduzca la de su navegador, que empieza por https://.',
     rate_limited:
       'Outline limita las solicitudes de esta clave: la integración lo intentará más tarde.',
     error: 'Outline respondió con un error: consulte los registros de la integración.',
@@ -127,6 +135,8 @@ export const COMMAND_ERRORS = {
     unreachable: 'Outline does not answer: nothing was done.',
     unauthorized: 'Outline did not accept the API key: nothing was done.',
     forbidden: 'The API key may not do this: nothing was done.',
+    redirected:
+      'Outline answers at another address: enter the address of your browser, starting with https://.',
     rate_limited: 'Outline limits the requests of this key: try again in a minute.',
     collection: 'No collection named "{name}": nothing was done.',
     collection_missing: 'Enter the collection of the document.',
@@ -144,6 +154,8 @@ export const COMMAND_ERRORS = {
     unreachable: "Outline ne répond pas : rien n'a été fait.",
     unauthorized: "Outline n'a pas accepté la clé d'API : rien n'a été fait.",
     forbidden: "La clé d'API ne permet pas de le faire : rien n'a été fait.",
+    redirected:
+      'Outline répond à une autre adresse : saisissez celle de votre navigateur, commençant par https://.',
     rate_limited: 'Outline limite les requêtes de cette clé : réessayez dans une minute.',
     collection: "Aucune collection nommée « {name} » : rien n'a été fait.",
     collection_missing: 'Saisissez la collection du document.',
@@ -162,6 +174,8 @@ export const COMMAND_ERRORS = {
     unreachable: 'Outline antwortet nicht: Es wurde nichts getan.',
     unauthorized: 'Outline hat den API-Schlüssel nicht akzeptiert: Es wurde nichts getan.',
     forbidden: 'Der API-Schlüssel erlaubt das nicht: Es wurde nichts getan.',
+    redirected:
+      'Outline antwortet unter einer anderen Adresse: Gib die deines Browsers ein, beginnend mit https://.',
     rate_limited:
       'Outline begrenzt die Anfragen dieses Schlüssels: Versuche es in einer Minute erneut.',
     collection: 'Keine Sammlung namens „{name}“: Es wurde nichts getan.',
@@ -182,6 +196,8 @@ export const COMMAND_ERRORS = {
     unreachable: 'Outline no responde: no se ha hecho nada.',
     unauthorized: 'Outline no aceptó la clave de API: no se ha hecho nada.',
     forbidden: 'La clave de API no permite hacerlo: no se ha hecho nada.',
+    redirected:
+      'Outline responde en otra dirección: introduzca la de su navegador, que empieza por https://.',
     rate_limited: 'Outline limita las solicitudes de esta clave: inténtelo de nuevo en un minuto.',
     collection: 'No hay ninguna colección llamada «{name}»: no se ha hecho nada.',
     collection_missing: 'Introduzca la colección del documento.',

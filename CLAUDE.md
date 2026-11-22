@@ -282,6 +282,13 @@ long, et sur un « Sie »/« Ihr… » de politesse en allemand. Le store exige 
 - `documents.search` rend `{ ranking, context, document }`, le `context` avec des `<b>` autour des mots trouvés.
 - Limites de débit par IP (actives par défaut en auto-hébergé) : 1000 requêtes/min au total ; 100/min pour
   documents.list, search, search_titles et update ; 25/min pour documents.create.
+- **fetch retire `Authorization` sur une redirection vers une autre origine** (http → https d'un Outline en
+  `FORCE_HTTPS`, actif par défaut) : la clé arrive absente et Outline répond 401. Le client passe en
+  `redirect: 'manual'`, suit seul le passage http → https du même hôte et garde l'adresse https ; toute autre
+  redirection est signalée.
+- `documents.search_titles` n'a pas de total et trie par date de modification : un titre exact peut se cacher
+  derrière plus de 25 titres plus longs, d'où la pagination (100 par page, 5 pages au plus).
+- Titre de document : 100 caractères au plus (`DocumentValidation.maxTitleLength`).
 - Version : `installation.info` (auto-hébergé seulement), facultative (`?` sur l'appareil).
 - Les webhooks d'Outline demandent une URL joignable depuis Outline : non utilisés, lecture périodique.
 - Le cœur filtre les déclencheurs par égalité stricte : `collection` du déclencheur = nom exact de la collection.

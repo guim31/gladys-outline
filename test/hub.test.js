@@ -456,3 +456,87 @@ test('the language changes the names, not the device', async (t) => {
   assert.equal(after.features[0].name, 'Erreichbar');
   assert.equal(after.features[1].name, 'Dokumente');
 });
+
+test('http redirected to https on the same host: followed with the key, kept', async (t) => {
+  const server = createOutline();
+  server.state.redirect = 'https';
+  const world = await createWorld({ server });
+  t.after(() => world.app.stop());
+  assert.equal(world.fake.connectionStatus.connected, true);
+  const last = server.state.requests.at(-1);
+  assert.match(last.url, /^https:\/\/192\.0\.2\.50:3000\/api\//);
+  assert.equal(last.key, API_KEY);
+  const count = server.state.requests.length;
+  await world.hub.refresh();
+  assert.ok(
+    server.state.requests.slice(count).every((r) => r.url.startsWith('https://')),
+    'the https address is kept',
+  );
+});
+
+test('a redirect elsewhere, or a proxy error page, is told for what it is', async (t) => {
+  const server = createOutline();
+  server.state.redirect = 'elsewhere';
+  const world = await createWorld({ server });
+  t.after(() => world.app.stop());
+  assert.match(world.fake.connectionStatus.message.fr, /Outline répond à une autre adresse/);
+  server.state.redirect = null;
+  await world.hub.refresh();
+  await createAll(world.fake);
+  server.state.proxyError = 502;
+  await world.hub.refresh();
+  assert.match(world.fake.connectionStatus.message.en, /Outline does not answer/);
+  assert.equal(world.fake.lastState(mainFeature('reachable')), 0);
+});
+
+test('a refused key or a rate limit: Outline answers, reachable stays 1', async (t) => {
+  const world = await createWorld();
+  t.after(() => world.app.stop());
+  await createAll(world.fake);
+  world.server.state.rateLimited = true;
+  await world.hub.refresh();
+  assert.equal(world.fake.connectionStatus.connected, false);
+  assert.equal(world.fake.lastState(mainFeature('reachable')), 1);
+});
+
+test('a wiki of 25 documents all changed is no burst: every change announced', async (t) => {
+  const server = createOutline();
+  server.state.documents = [];
+  const world = await createWorld({ server });
+  t.after(() => world.app.stop());
+  for (let i = 0; i < 25; i += 1) {
+    server.edit(`Page ${i}`);
+  }
+  for (let i = 0; i < 3; i += 1) {
+    await world.hub.refresh();
+  }
+  assert.equal(changed(world.fake).length, 25);
+});
+
+test('append_line finds the exact title behind many longer ones', async (t) => {
+  const world = await createWorld();
+  t.after(() => world.app.stop());
+  for (let i = 0; i < 130; i += 1) {
+    world.server.edit(`Journal chaudière ${i}`);
+  }
+  const outputs = await run(world, 'append_line', {
+    document: 'Journal chaudière',
+    line: 'x',
+    collection: 'Maison',
+  });
+  assert.equal(outputs.created, false);
+  assert.equal(outputs.document_id, 'f7258c5c-bdc7-49b0-bd03-61d65bbf1407');
+});
+
+test('append_line: an address that is not a document is never taken as a title', async (t) => {
+  const world = await createWorld();
+  t.after(() => world.app.stop());
+  const count = world.server.state.documents.length;
+  const error = await failure(world, 'append_line', {
+    document: `${HOST}/s/abcdef`,
+    line: 'x',
+    collection: 'Maison',
+  });
+  assert.match(error.fr, /Aucun document/);
+  assert.equal(world.server.state.documents.length, count);
+});

@@ -128,6 +128,10 @@ et **Adresse du document** ; la deuxième aussi **Document créé**.
 - **« Outline limite les requêtes de cette clé »** : Outline a répondu 429.
   L'intégration réessaie à la lecture suivante ; espacez les scènes qui
   écrivent.
+- **« Outline répond à une autre adresse »** : Outline redirige vers une
+  autre adresse (une page de connexion, un autre domaine). Saisissez celle
+  affichée par votre navigateur. Un simple passage de http à https est suivi
+  tout seul.
 - **« Outline ne répond pas »** : vérifiez l'adresse et le port depuis la
   machine de Gladys. Le conteneur est sur un réseau en pont : `localhost` est
   le conteneur lui-même, saisissez plutôt l'adresse IP du serveur.

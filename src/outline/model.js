@@ -43,7 +43,7 @@ export function summarizeDocument(document, baseUrl, collectionNames = new Map()
  * What the user typed to name a document: its address (`.../doc/slug-AbCdE12345`),
  * its UUID or its urlId give an id; anything else is a title.
  * @param {unknown} raw
- * @returns {{ id?: string, title?: string }}
+ * @returns {{ id?: string, title?: string, link?: string }}
  */
 export function parseDocumentRef(raw) {
   const text = clean(typeof raw === 'number' ? String(raw) : raw).slice(0, 2000);
@@ -58,7 +58,12 @@ export function parseDocumentRef(raw) {
   if (uuid && uuid[0].length === text.length) {
     return { id: uuid[0] };
   }
-  return { title: text.slice(0, 255) };
+  if (/^https?:\/\//i.test(text)) {
+    // An address that is not a document (a share link, a collection): never a title.
+    return { link: text };
+  }
+  // Outline refuses a title longer than 100 characters.
+  return { title: text.slice(0, 100) };
 }
 
 /**
