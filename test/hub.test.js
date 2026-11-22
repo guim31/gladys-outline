@@ -472,6 +472,9 @@ test('http redirected to https on the same host: followed with the key, kept', a
     server.state.requests.slice(count).every((r) => r.url.startsWith('https://')),
     'the https address is kept',
   );
+  const widget = await world.fake.widgetGet('documents', { settings: {}, language: 'en' });
+  const item = widget.data.content.components.find((c) => c.type === 'card-list').items[0];
+  assert.match(item.links[0].url, /^https:\/\/192\.0\.2\.50:3000\/doc\//);
 });
 
 test('a redirect elsewhere, or a proxy error page, is told for what it is', async (t) => {

@@ -140,6 +140,11 @@ export class Hub {
     return this.config.language;
   }
 
+  /** Where documents open: the address Outline answers at (https once redirected). */
+  get baseUrl() {
+    return this.client?.url ?? this.config.url ?? '';
+  }
+
   get loaded() {
     return this.counters !== null;
   }
@@ -315,7 +320,7 @@ export class Hub {
     }));
     const names = this.#collectionNames();
     this.documents = recent.documents
-      .map((d) => summarizeDocument(d, this.config.url, names))
+      .map((d) => summarizeDocument(d, this.baseUrl, names))
       .sort(byNewest);
     this.counters = { documents: recent.total, collections: collections.total };
     this.#recover();
@@ -534,7 +539,7 @@ export class Hub {
     if (!this.loaded) {
       return [];
     }
-    return [buildWikiDevice(this.gladys, this.language, this.config.url ?? '', this.version)];
+    return [buildWikiDevice(this.gladys, this.language, this.baseUrl, this.version)];
   }
 
   async publishDevices() {
@@ -655,7 +660,7 @@ export class Hub {
     return {
       collection,
       documents: recent.documents
-        .map((d) => summarizeDocument(d, this.config.url, names))
+        .map((d) => summarizeDocument(d, this.baseUrl, names))
         .sort(byNewest),
       total: recent.total,
     };
@@ -907,7 +912,7 @@ export class Hub {
     if (!best) {
       throw new CommandError('no_result', { name: query.slice(0, 100) });
     }
-    const document = summarizeDocument(best.document, this.config.url, this.#collectionNames());
+    const document = summarizeDocument(best.document, this.baseUrl, this.#collectionNames());
     return {
       count: answer.total,
       title: document.title,
@@ -922,7 +927,7 @@ export class Hub {
     return {
       document_id: document.id,
       title: String(document.title ?? ''),
-      url: summarizeDocument(document, this.config.url).url,
+      url: summarizeDocument(document, this.baseUrl).url,
     };
   }
 
